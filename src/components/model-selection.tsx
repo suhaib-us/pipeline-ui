@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -6,6 +8,7 @@ import { PlusCircle, Trash2 } from "lucide-react"
 import type { ModelConfig } from "./model-builder"
 import { Card, CardContent } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { motion, AnimatePresence } from "framer-motion"
 
 interface ModelSelectionProps {
   config: ModelConfig
@@ -89,7 +92,7 @@ export function ModelSelection({ config, updateConfig }: ModelSelectionProps) {
   const [selectedLayer, setSelectedLayer] = useState("")
   const [availableLayers, setAvailableLayers] = useState<string[]>([])
   const [modelCategory, setModelCategory] = useState(config.pretrainedModelCategory || "")
-  const [_, setAvailableModels] = useState<string[]>([])
+  const [availableModels, setAvailableModels] = useState<string[]>([])
 
   const handleTabChange = (value: string) => {
     updateConfig({ modelType: value as "pretrained" | "custom" })
@@ -139,23 +142,38 @@ export function ModelSelection({ config, updateConfig }: ModelSelectionProps) {
 
   return (
     <div className="space-y-6">
-      <div>
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
         <h2 className="text-2xl font-bold text-slate-900">Model Selection</h2>
         <p className="text-slate-500">Choose between pre-trained models or build a custom model</p>
-      </div>
+      </motion.div>
 
       <Tabs defaultValue={config.modelType} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="pretrained">Pre-trained Models</TabsTrigger>
-          <TabsTrigger value="custom">Custom Model</TabsTrigger>
-        </TabsList>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+        >
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="pretrained" className="transition-all duration-200 data-[state=active]:shadow-md">
+              Pre-trained Models
+            </TabsTrigger>
+            <TabsTrigger value="custom" className="transition-all duration-200 data-[state=active]:shadow-md">
+              Custom Model
+            </TabsTrigger>
+          </TabsList>
+        </motion.div>
 
         <TabsContent value="pretrained" className="mt-4 space-y-6">
           <div className="grid gap-6 md:grid-cols-2">
-            <div className="space-y-2">
+            <motion.div
+              className="space-y-2"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
+            >
               <label className="text-sm font-medium text-slate-700">Model Type</label>
               <Select value={modelCategory} onValueChange={handleModelCategoryChange}>
-                <SelectTrigger>
+                <SelectTrigger className="transition-all duration-200 hover:border-slate-400">
                   <SelectValue placeholder="Select model type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -166,12 +184,17 @@ export function ModelSelection({ config, updateConfig }: ModelSelectionProps) {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+            </motion.div>
 
-            <div className="space-y-2">
+            <motion.div
+              className="space-y-2"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.3 }}
+            >
               <label className="text-sm font-medium text-slate-700">Specific Model</label>
               <Select value={config.pretrainedModel} onValueChange={handleModelChange} disabled={!modelCategory}>
-                <SelectTrigger>
+                <SelectTrigger className="transition-all duration-200 hover:border-slate-400">
                   <SelectValue placeholder="Select a model" />
                 </SelectTrigger>
                 <SelectContent>
@@ -182,16 +205,21 @@ export function ModelSelection({ config, updateConfig }: ModelSelectionProps) {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+            </motion.div>
           </div>
         </TabsContent>
 
         <TabsContent value="custom" className="mt-4 space-y-6">
           <div className="grid gap-6 md:grid-cols-2">
-            <div className="space-y-2">
+            <motion.div
+              className="space-y-2"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
+            >
               <label className="text-sm font-medium text-slate-700">Layer Category</label>
               <Select value={selectedLayerCategory} onValueChange={handleLayerCategoryChange}>
-                <SelectTrigger>
+                <SelectTrigger className="transition-all duration-200 hover:border-slate-400">
                   <SelectValue placeholder="Select layer category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -202,12 +230,17 @@ export function ModelSelection({ config, updateConfig }: ModelSelectionProps) {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+            </motion.div>
 
-            <div className="space-y-2">
+            <motion.div
+              className="space-y-2"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.3 }}
+            >
               <label className="text-sm font-medium text-slate-700">Layer Type</label>
               <Select value={selectedLayer} onValueChange={setSelectedLayer} disabled={!selectedLayerCategory}>
-                <SelectTrigger>
+                <SelectTrigger className="transition-all duration-200 hover:border-slate-400">
                   <SelectValue placeholder="Select a layer" />
                 </SelectTrigger>
                 <SelectContent>
@@ -218,43 +251,64 @@ export function ModelSelection({ config, updateConfig }: ModelSelectionProps) {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+            </motion.div>
           </div>
 
-          <div className="flex justify-end">
-            <Button onClick={addLayer} disabled={!selectedLayer} className="flex items-center gap-1">
+          <motion.div
+            className="flex justify-end"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.4 }}
+          >
+            <Button
+              onClick={addLayer}
+              disabled={!selectedLayer}
+              className="flex items-center gap-1 transition-all duration-200 hover:scale-105"
+            >
               <PlusCircle className="h-4 w-4" />
               Add Layer
             </Button>
-          </div>
+          </motion.div>
 
-          <div className="space-y-2">
+          <motion.div
+            className="space-y-2"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.5 }}
+          >
             <label className="text-sm font-medium text-slate-700">Model Architecture</label>
-            <Card>
+            <Card className="overflow-hidden border-slate-200 shadow-sm transition-all duration-200 hover:shadow-md">
               <CardContent className="p-4">
                 {config.customLayers && config.customLayers.length > 0 ? (
                   <ScrollArea className="h-[200px]">
-                    <div className="space-y-2">
-                      {config.customLayers.map((layer, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 p-3"
-                        >
-                          <div>
-                            <span className="font-medium">{layer.type}</span>
-                            <span className="ml-2 text-xs text-slate-500">({layer.category})</span>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeLayer(index)}
-                            className="h-8 w-8 p-0 text-slate-500 hover:text-red-500"
+                    <AnimatePresence>
+                      <div className="space-y-2">
+                        {config.customLayers.map((layer, index) => (
+                          <motion.div
+                            key={index}
+                            className="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 p-3"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 20 }}
+                            transition={{ duration: 0.2 }}
+                            layout
                           >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
+                            <div>
+                              <span className="font-medium">{layer.type}</span>
+                              <span className="ml-2 text-xs text-slate-500">({layer.category})</span>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeLayer(index)}
+                              className="h-8 w-8 p-0 text-slate-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-500"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </AnimatePresence>
                   </ScrollArea>
                 ) : (
                   <div className="flex h-[200px] items-center justify-center text-slate-500">
@@ -263,7 +317,7 @@ export function ModelSelection({ config, updateConfig }: ModelSelectionProps) {
                 )}
               </CardContent>
             </Card>
-          </div>
+          </motion.div>
         </TabsContent>
       </Tabs>
     </div>

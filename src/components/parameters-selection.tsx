@@ -1,9 +1,8 @@
-"use client"
-
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import type { ModelConfig } from "./model-builder"
+import { motion } from "framer-motion"
 
 interface ParametersSelectionProps {
   config: ModelConfig
@@ -153,175 +152,233 @@ export function ParametersSelection({ config, updateConfig }: ParametersSelectio
 
   return (
     <div className="space-y-6">
-      <div>
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
         <h2 className="text-2xl font-bold text-slate-900">Parameters</h2>
         <p className="text-slate-500">Configure monitoring, optimizers, loss functions, and evaluation metrics</p>
-      </div>
+      </motion.div>
 
-      <Tabs defaultValue="monitoring" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
-          <TabsTrigger value="optimizers">Optimizers</TabsTrigger>
-          <TabsTrigger value="losses">Losses</TabsTrigger>
-          <TabsTrigger value="metrics">Metrics</TabsTrigger>
-        </TabsList>
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+      >
+        <Tabs defaultValue="monitoring" className="w-full">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="monitoring" className="transition-all duration-200 data-[state=active]:shadow-md">
+              Monitoring
+            </TabsTrigger>
+            <TabsTrigger value="optimizers" className="transition-all duration-200 data-[state=active]:shadow-md">
+              Optimizers
+            </TabsTrigger>
+            <TabsTrigger value="losses" className="transition-all duration-200 data-[state=active]:shadow-md">
+              Losses
+            </TabsTrigger>
+            <TabsTrigger value="metrics" className="transition-all duration-200 data-[state=active]:shadow-md">
+              Metrics
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Monitoring Tab */}
-        <TabsContent value="monitoring" className="mt-4 space-y-6">
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Category</label>
-              <Select value={monitoringCategory} onValueChange={handleMonitoringCategoryChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.keys(monitoringData).map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Option</label>
-              <Select
-                value={config.monitoring?.option || ""}
-                onValueChange={handleMonitoringOptionChange}
-                disabled={!monitoringCategory}
+          {/* Monitoring Tab */}
+          <TabsContent value="monitoring" className="mt-4 space-y-6">
+            <div className="grid gap-6 md:grid-cols-2">
+              <motion.div
+                className="space-y-2"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: 0.2 }}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select option" />
-                </SelectTrigger>
-                <SelectContent>
-                  {monitoringData[monitoringCategory as keyof typeof monitoringData]?.map((option) => (
-                    <SelectItem key={option} value={option}>
-                      {option}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </TabsContent>
+                <label className="text-sm font-medium text-slate-700">Category</label>
+                <Select value={monitoringCategory} onValueChange={handleMonitoringCategoryChange}>
+                  <SelectTrigger className="transition-all duration-200 hover:border-slate-400">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.keys(monitoringData).map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </motion.div>
 
-        {/* Optimizers Tab */}
-        <TabsContent value="optimizers" className="mt-4 space-y-6">
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Category</label>
-              <Select value={optimizerCategory} onValueChange={handleOptimizerCategoryChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.keys(optimizersData).map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Optimizer</label>
-              <Select
-                value={config.optimizer?.name || ""}
-                onValueChange={handleOptimizerChange}
-                disabled={!optimizerCategory}
+              <motion.div
+                className="space-y-2"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: 0.3 }}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select optimizer" />
-                </SelectTrigger>
-                <SelectContent>
-                  {optimizersData[optimizerCategory as keyof typeof optimizersData]?.map((optimizer) => (
-                    <SelectItem key={optimizer} value={optimizer}>
-                      {optimizer}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                <label className="text-sm font-medium text-slate-700">Option</label>
+                <Select
+                  value={config.monitoring?.option || ""}
+                  onValueChange={handleMonitoringOptionChange}
+                  disabled={!monitoringCategory}
+                >
+                  <SelectTrigger className="transition-all duration-200 hover:border-slate-400">
+                    <SelectValue placeholder="Select option" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {monitoringData[monitoringCategory as keyof typeof monitoringData]?.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </motion.div>
             </div>
-          </div>
-        </TabsContent>
+          </TabsContent>
 
-        {/* Losses Tab */}
-        <TabsContent value="losses" className="mt-4 space-y-6">
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Category</label>
-              <Select value={lossCategory} onValueChange={handleLossCategoryChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.keys(lossesData).map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          {/* Optimizers Tab */}
+          <TabsContent value="optimizers" className="mt-4 space-y-6">
+            <div className="grid gap-6 md:grid-cols-2">
+              <motion.div
+                className="space-y-2"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: 0.2 }}
+              >
+                <label className="text-sm font-medium text-slate-700">Category</label>
+                <Select value={optimizerCategory} onValueChange={handleOptimizerCategoryChange}>
+                  <SelectTrigger className="transition-all duration-200 hover:border-slate-400">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.keys(optimizersData).map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </motion.div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Loss Function</label>
-              <Select value={config.loss?.name || ""} onValueChange={handleLossChange} disabled={!lossCategory}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select loss function" />
-                </SelectTrigger>
-                <SelectContent>
-                  {lossesData[lossCategory as keyof typeof lossesData]?.map((loss) => (
-                    <SelectItem key={loss} value={loss}>
-                      {loss}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <motion.div
+                className="space-y-2"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: 0.3 }}
+              >
+                <label className="text-sm font-medium text-slate-700">Optimizer</label>
+                <Select
+                  value={config.optimizer?.name || ""}
+                  onValueChange={handleOptimizerChange}
+                  disabled={!optimizerCategory}
+                >
+                  <SelectTrigger className="transition-all duration-200 hover:border-slate-400">
+                    <SelectValue placeholder="Select optimizer" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {optimizersData[optimizerCategory as keyof typeof optimizersData]?.map((optimizer) => (
+                      <SelectItem key={optimizer} value={optimizer}>
+                        {optimizer}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </motion.div>
             </div>
-          </div>
-        </TabsContent>
+          </TabsContent>
 
-        {/* Metrics Tab */}
-        <TabsContent value="metrics" className="mt-4 space-y-6">
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Category</label>
-              <Select value={metricCategory} onValueChange={handleMetricCategoryChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.keys(metricsData).map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          {/* Losses Tab */}
+          <TabsContent value="losses" className="mt-4 space-y-6">
+            <div className="grid gap-6 md:grid-cols-2">
+              <motion.div
+                className="space-y-2"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: 0.2 }}
+              >
+                <label className="text-sm font-medium text-slate-700">Category</label>
+                <Select value={lossCategory} onValueChange={handleLossCategoryChange}>
+                  <SelectTrigger className="transition-all duration-200 hover:border-slate-400">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.keys(lossesData).map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </motion.div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Metric</label>
-              <Select value={config.metrics?.name || ""} onValueChange={handleMetricChange} disabled={!metricCategory}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select metric" />
-                </SelectTrigger>
-                <SelectContent>
-                  {metricsData[metricCategory as keyof typeof metricsData]?.map((metric) => (
-                    <SelectItem key={metric} value={metric}>
-                      {metric}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <motion.div
+                className="space-y-2"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: 0.3 }}
+              >
+                <label className="text-sm font-medium text-slate-700">Loss Function</label>
+                <Select value={config.loss?.name || ""} onValueChange={handleLossChange} disabled={!lossCategory}>
+                  <SelectTrigger className="transition-all duration-200 hover:border-slate-400">
+                    <SelectValue placeholder="Select loss function" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {lossesData[lossCategory as keyof typeof lossesData]?.map((loss) => (
+                      <SelectItem key={loss} value={loss}>
+                        {loss}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </motion.div>
             </div>
-          </div>
-        </TabsContent>
-      </Tabs>
+          </TabsContent>
+
+          {/* Metrics Tab */}
+          <TabsContent value="metrics" className="mt-4 space-y-6">
+            <div className="grid gap-6 md:grid-cols-2">
+              <motion.div
+                className="space-y-2"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: 0.2 }}
+              >
+                <label className="text-sm font-medium text-slate-700">Category</label>
+                <Select value={metricCategory} onValueChange={handleMetricCategoryChange}>
+                  <SelectTrigger className="transition-all duration-200 hover:border-slate-400">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.keys(metricsData).map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </motion.div>
+
+              <motion.div
+                className="space-y-2"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: 0.3 }}
+              >
+                <label className="text-sm font-medium text-slate-700">Metric</label>
+                <Select
+                  value={config.metrics?.name || ""}
+                  onValueChange={handleMetricChange}
+                  disabled={!metricCategory}
+                >
+                  <SelectTrigger className="transition-all duration-200 hover:border-slate-400">
+                    <SelectValue placeholder="Select metric" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {metricsData[metricCategory as keyof typeof metricsData]?.map((metric) => (
+                      <SelectItem key={metric} value={metric}>
+                        {metric}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </motion.div>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </motion.div>
     </div>
   )
 }

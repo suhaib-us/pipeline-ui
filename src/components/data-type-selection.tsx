@@ -1,8 +1,7 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import type { ModelConfig } from "./model-builder"
+import { motion } from "framer-motion"
 
 interface DataTypeSelectionProps {
   config: ModelConfig
@@ -45,16 +44,21 @@ export function DataTypeSelection({ config, updateConfig }: DataTypeSelectionPro
 
   return (
     <div className="space-y-6">
-      <div>
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
         <h2 className="text-2xl font-bold text-slate-900">Data Type Selection</h2>
         <p className="text-slate-500">Select the main data type and specific format</p>
-      </div>
+      </motion.div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <div className="space-y-2">
+        <motion.div
+          className="space-y-2"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+        >
           <label className="text-sm font-medium text-slate-700">Main Data Type</label>
           <Select value={config.mainDataType} onValueChange={(value) => updateConfig({ mainDataType: value })}>
-            <SelectTrigger>
+            <SelectTrigger className="transition-all duration-200 hover:border-slate-400">
               <SelectValue placeholder="Select a data type" />
             </SelectTrigger>
             <SelectContent>
@@ -65,16 +69,21 @@ export function DataTypeSelection({ config, updateConfig }: DataTypeSelectionPro
               ))}
             </SelectContent>
           </Select>
-        </div>
+        </motion.div>
 
-        <div className="space-y-2">
+        <motion.div
+          className="space-y-2"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+        >
           <label className="text-sm font-medium text-slate-700">Data Format</label>
           <Select
             value={config.subDataType}
             onValueChange={(value) => updateConfig({ subDataType: value })}
             disabled={!config.mainDataType}
           >
-            <SelectTrigger>
+            <SelectTrigger className="transition-all duration-200 hover:border-slate-400">
               <SelectValue placeholder="Select a data format" />
             </SelectTrigger>
             <SelectContent>
@@ -85,7 +94,7 @@ export function DataTypeSelection({ config, updateConfig }: DataTypeSelectionPro
               ))}
             </SelectContent>
           </Select>
-        </div>
+        </motion.div>
       </div>
     </div>
   )
