@@ -89,7 +89,7 @@ export function ModelSelection({ config, updateConfig }: ModelSelectionProps) {
   const [selectedLayer, setSelectedLayer] = useState("")
   const [availableLayers, setAvailableLayers] = useState<string[]>([])
   const [modelCategory, setModelCategory] = useState(config.pretrainedModelCategory || "")
-  const [availableModels, setAvailableModels] = useState<string[]>([])
+  const [_, setAvailableModels] = useState<string[]>([])
 
   const handleTabChange = (value: string) => {
     updateConfig({ modelType: value as "pretrained" | "custom" })
