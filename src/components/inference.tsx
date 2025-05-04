@@ -23,6 +23,7 @@ export function Inference({ config }: InferenceProps) {
   }, [config])
 
   const copyToClipboard = () => {
+    console.log('clicked')
     navigator.clipboard.writeText(jsonOutput)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
@@ -57,7 +58,7 @@ export function Inference({ config }: InferenceProps) {
               <Button
                 variant="outline"
                 size="sm"
-                className={`absolute right-2 top-2 transition-all duration-200 ${
+                className={`z-20 absolute right-2 top-2 transition-all duration-200 ${
                   copied ? "bg-green-50 text-green-600" : "hover:bg-slate-100"
                 }`}
                 onClick={copyToClipboard}
