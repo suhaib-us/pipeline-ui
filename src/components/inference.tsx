@@ -19,8 +19,8 @@ export function Inference({ config }: InferenceProps) {
     setJsonOutput(formattedJson)
   }, [config])
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(jsonOutput)
+  const copyToClipboard = async () => {
+    await navigator.clipboard.writeText(jsonOutput)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }

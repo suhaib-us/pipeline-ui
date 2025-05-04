@@ -17,7 +17,7 @@ const pretrainedModels = {
   "Image Classification": ["ResNet", "VGG", "Inception", "EfficientNet", "DenseNet", "MobileNet", "AlexNet"],
   "Object Detection": [
     "Faster R-CNN",
-    "YOLOv5 (requires external setup)",
+    "YOLOv5",
     "SSD (Single Shot Multibox Detector)",
     "RetinaNet",
     "Mask R-CNN",
@@ -33,11 +33,11 @@ const pretrainedModels = {
   ],
   "Text Classification": ["BERT", "DistilBERT", "ALBERT", "XLNet", "RoBERTa"],
   "Object Tracking": [
-    "DeepSORT (requires external setup)",
+    "DeepSORT",
     "SORT (Simple Online and Realtime Tracking)",
     "Track R-CNN",
   ],
-  "Audio Processing": ["Wav2Vec2.0", "HuBERT", "Tacotron (for TTS, requires external setup)", "DeepSpeech"],
+  "Audio Processing": ["Wav2Vec2.0", "HuBERT", "Tacotron", "DeepSpeech"],
   "Generative Models": [
     "GAN (Generative Adversarial Network)",
     "DCGAN (Deep Convolutional GAN)",
