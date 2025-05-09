@@ -69,17 +69,31 @@ const preprocessingOptions = {
   ],
 }
 
-export function DataPreprocessing({ config, updateConfig }: DataPreprocessingProps) {
+export function DataPreprocessing({
+  config,
+  updateConfig,
+}: DataPreprocessingProps) {
   const [availableOptions, setAvailableOptions] = useState<string[]>([])
 
   useEffect(() => {
-    if (config.mainDataType && preprocessingOptions[config.mainDataType as keyof typeof preprocessingOptions]) {
-      setAvailableOptions(preprocessingOptions[config.mainDataType as keyof typeof preprocessingOptions])
+    if (
+      config.mainDataType &&
+      preprocessingOptions[
+        config.mainDataType as keyof typeof preprocessingOptions
+      ]
+    ) {
+      setAvailableOptions(
+        preprocessingOptions[
+          config.mainDataType as keyof typeof preprocessingOptions
+        ],
+      )
 
       // Filter out preprocessing options that are no longer valid
       if (config.preprocessing && config.preprocessing.length > 0) {
         const validOptions = config.preprocessing.filter((option) =>
-          preprocessingOptions[config.mainDataType as keyof typeof preprocessingOptions].includes(option),
+          preprocessingOptions[
+            config.mainDataType as keyof typeof preprocessingOptions
+          ].includes(option),
         )
         updateConfig({ preprocessing: validOptions })
       }
@@ -105,13 +119,25 @@ export function DataPreprocessing({ config, updateConfig }: DataPreprocessingPro
 
   return (
     <div className="space-y-6">
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-        <h2 className="text-2xl font-bold text-slate-900">Data Preprocessing</h2>
-        <p className="text-slate-500">Select preprocessing options for your data</p>
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <h2 className="text-2xl font-bold text-slate-900">
+          Data Preprocessing
+        </h2>
+        <p className="text-slate-500">
+          Select preprocessing options for your data
+        </p>
       </motion.div>
 
       {config.mainDataType ? (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
           <Card className="border-slate-200 shadow-sm">
             <CardContent className="p-4">
               <ScrollArea className="h-[400px] pr-4">
@@ -127,8 +153,12 @@ export function DataPreprocessing({ config, updateConfig }: DataPreprocessingPro
                     >
                       <Checkbox
                         id={option}
-                        checked={config.preprocessing?.includes(option) || false}
-                        onCheckedChange={() => handleTogglePreprocessing(option)}
+                        checked={
+                          config.preprocessing?.includes(option) || false
+                        }
+                        onCheckedChange={() =>
+                          handleTogglePreprocessing(option)
+                        }
                         className="mt-1"
                       />
                       <div className="space-y-1">
@@ -138,7 +168,9 @@ export function DataPreprocessing({ config, updateConfig }: DataPreprocessingPro
                         >
                           {option}
                         </Label>
-                        <p className="text-xs text-slate-500">{getPreprocessingDescription(option)}</p>
+                        <p className="text-xs text-slate-500">
+                          {getPreprocessingDescription(option)}
+                        </p>
                       </div>
                     </motion.div>
                   ))}
@@ -154,7 +186,10 @@ export function DataPreprocessing({ config, updateConfig }: DataPreprocessingPro
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
         >
-          <p className="text-slate-500">Please select a data type first to see available preprocessing options.</p>
+          <p className="text-slate-500">
+            Please select a data type first to see available preprocessing
+            options.
+          </p>
         </motion.div>
       )}
     </div>
@@ -163,34 +198,55 @@ export function DataPreprocessing({ config, updateConfig }: DataPreprocessingPro
 
 function getPreprocessingDescription(option: string): string {
   const descriptions: Record<string, string> = {
-    "torchvision.transforms.Resize(size)": "Resize the input image to the given size.",
-    "torchvision.transforms.RandomCrop(size)": "Crop the image at a random location.",
-    "torchvision.transforms.RandomHorizontalFlip(p)": "Horizontally flip the image with probability p.",
-    "torchvision.transforms.Normalize(mean, std)": "Normalize a tensor image with mean and standard deviation.",
+    "torchvision.transforms.Resize(size)":
+      "Resize the input image to the given size.",
+    "torchvision.transforms.RandomCrop(size)":
+      "Crop the image at a random location.",
+    "torchvision.transforms.RandomHorizontalFlip(p)":
+      "Horizontally flip the image with probability p.",
+    "torchvision.transforms.Normalize(mean, std)":
+      "Normalize a tensor image with mean and standard deviation.",
     "torchvision.transforms.ColorJitter(brightness, contrast, saturation, hue)":
       "Randomly change the brightness, contrast, saturation and hue of an image.",
-    "torchvision.transforms.ToTensor()": "Convert a PIL Image or numpy.ndarray to tensor.",
-    "torchvision.transforms.RandomRotation(degrees)": "Rotate the image by a random angle.",
+    "torchvision.transforms.ToTensor()":
+      "Convert a PIL Image or numpy.ndarray to tensor.",
+    "torchvision.transforms.RandomRotation(degrees)":
+      "Rotate the image by a random angle.",
     "torchvision.transforms.CenterCrop(size)": "Crop the image at the center.",
-    "torchvision.transforms.Grayscale(num_output_channels)": "Convert image to grayscale.",
+    "torchvision.transforms.Grayscale(num_output_channels)":
+      "Convert image to grayscale.",
     "torchtext.transforms.ToTensor()": "Convert text to tensor representation.",
-    "torchtext.transforms.VocabTransform(vocab)": "Transform tokens into indices using a vocabulary.",
-    "torchtext.transforms.SentencePieceTokenizer()": "Tokenize text using SentencePiece model.",
+    "torchtext.transforms.VocabTransform(vocab)":
+      "Transform tokens into indices using a vocabulary.",
+    "torchtext.transforms.SentencePieceTokenizer()":
+      "Tokenize text using SentencePiece model.",
     "torchtext.transforms.Sequential": "Apply a sequence of transformations.",
-    "torchtext.transforms.PadTransform(max_length, pad_value)": "Pad sequences to the same length.",
-    "torchtext.transforms.TruncateTransform(max_length)": "Truncate sequences to a maximum length.",
-    "torch.nn.Normalize(mean, std)": "Normalize features by mean and standard deviation.",
+    "torchtext.transforms.PadTransform(max_length, pad_value)":
+      "Pad sequences to the same length.",
+    "torchtext.transforms.TruncateTransform(max_length)":
+      "Truncate sequences to a maximum length.",
+    "torch.nn.Normalize(mean, std)":
+      "Normalize features by mean and standard deviation.",
     "torch.nn.MinMaxScaler()": "Scale features to a given range.",
-    "torch.nn.StandardScaler()": "Standardize features by removing the mean and scaling to unit variance.",
-    "torch.nn.OneHotEncoder()": "Encode categorical features as a one-hot numeric array.",
-    "torch.nn.MissingValueImputer(strategy)": "Replace missing values using a specified strategy.",
-    "torchaudio.transforms.MelSpectrogram()": "Create a spectrogram from an audio signal.",
-    "torchaudio.transforms.MFCC()": "Create the Mel-frequency cepstrum coefficients from an audio signal.",
-    "torchaudio.transforms.AmplitudeToDB()": "Convert amplitude to decibel scale.",
-    "torchaudio.transforms.Resample()": "Resample audio signal to a different frequency.",
-    "torchaudio.transforms.TimeStretch()": "Stretch audio signal in time without changing pitch.",
+    "torch.nn.StandardScaler()":
+      "Standardize features by removing the mean and scaling to unit variance.",
+    "torch.nn.OneHotEncoder()":
+      "Encode categorical features as a one-hot numeric array.",
+    "torch.nn.MissingValueImputer(strategy)":
+      "Replace missing values using a specified strategy.",
+    "torchaudio.transforms.MelSpectrogram()":
+      "Create a spectrogram from an audio signal.",
+    "torchaudio.transforms.MFCC()":
+      "Create the Mel-frequency cepstrum coefficients from an audio signal.",
+    "torchaudio.transforms.AmplitudeToDB()":
+      "Convert amplitude to decibel scale.",
+    "torchaudio.transforms.Resample()":
+      "Resample audio signal to a different frequency.",
+    "torchaudio.transforms.TimeStretch()":
+      "Stretch audio signal in time without changing pitch.",
     "torchaudio.transforms.PitchShift()": "Shift the pitch of an audio signal.",
-    "Custom Preprocessing Function": "Define a custom function for preprocessing.",
+    "Custom Preprocessing Function":
+      "Define a custom function for preprocessing.",
   }
 
   return descriptions[option] || "Apply this transformation to your data."

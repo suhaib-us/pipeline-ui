@@ -22,6 +22,7 @@ export type ModelConfig = {
   mainDataType: string
   subDataType: string
   preprocessing: string[]
+  fileMetadata: any
   modelType: "pretrained" | "custom"
   pretrainedModelCategory?: string
   pretrainedModel?: string
@@ -71,6 +72,7 @@ export function ModelBuilder() {
     mainDataType: "",
     subDataType: "",
     preprocessing: [],
+    fileMetadata: null,
     modelType: "pretrained",
     customLayers: [],
     training: {

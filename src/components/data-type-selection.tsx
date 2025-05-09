@@ -41,6 +41,22 @@ export function DataTypeSelection({ config, updateConfig }: DataTypeSelectionPro
     }
   }, [config.mainDataType])
 
+  const [_, setFileMetadata] = useState<any>(null);
+
+  const handleFileChange = (event: any) => {
+    const file = event.target.files[0];
+    if (file) {
+      const metadata = {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        lastModified: file.lastModified,
+      };
+      setFileMetadata(metadata);
+      updateConfig({ fileMetadata: metadata }); // Update the config with the file metadata
+    }
+  };
+
   return (
     <div className="space-y-6">
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
@@ -95,6 +111,15 @@ export function DataTypeSelection({ config, updateConfig }: DataTypeSelectionPro
           </Select>
         </motion.div>
       </div>
+      <motion.div
+        className="flex gap-3.5 items-center"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.3, delay: 0.3 }}
+      >
+        <label className="text-lg text-slate-700">Upload Data File</label>
+        <input type="file" onChange={handleFileChange} className="border border-slate-300 rounded-md px-4 py-2" />
+      </motion.div>
     </div>
   )
 }
