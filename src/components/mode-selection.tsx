@@ -13,8 +13,8 @@ export function ModeSelection({ config, updateConfig }: ModeSelectionProps) {
   return (
     <div className="space-y-6">
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-        <h2 className="text-2xl font-bold text-slate-900">Mode Selection</h2>
-        <p className="text-slate-500">Choose between Deep Learning or Machine Learning</p>
+        <h2 className="text-2xl font-bold text-slate-900">Framework Selection</h2>
+        <p className="text-slate-500">Choose between Deep Learning or Machine Learning with PyTorch</p>
       </motion.div>
 
       <RadioGroup
@@ -36,7 +36,7 @@ export function ModeSelection({ config, updateConfig }: ModeSelectionProps) {
           >
             <CardTitle className="text-xl">Deep Learning</CardTitle>
             <CardDescription className="mt-2">
-              Neural networks with multiple layers for complex pattern recognition and feature learning.
+              Neural networks with multiple layers for complex pattern recognition using PyTorch.
             </CardDescription>
           </Label>
         </motion.div>
@@ -55,7 +55,7 @@ export function ModeSelection({ config, updateConfig }: ModeSelectionProps) {
           >
             <CardTitle className="text-xl">Machine Learning</CardTitle>
             <CardDescription className="mt-2">
-              Traditional algorithms that learn patterns from data without deep neural architectures.
+              Traditional algorithms with PyTorch/scikit-learn integration for structured data analysis.
             </CardDescription>
           </Label>
         </motion.div>

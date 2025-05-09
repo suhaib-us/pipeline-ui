@@ -11,29 +11,98 @@ interface TaskSelectionProps {
 }
 
 // Task tree data structure
-const taskTree = {
-  "Image Processing": ["Image Classification", "Object Detection", "Image Segmentation"],
-  "Text Processing": ["Text Classification", "Sentiment Analysis", "Named Entity Recognition", "Text Generation"],
-  "Traditional Machine Learning": ["Classification", "Regression", "Clustering"],
-  "Reinforcement Learning": ["Value-based Methods", "Policy-based Methods", "Model-based Methods"],
-  "Other Tasks": ["Anomaly Detection", "Dimensionality Reduction", "Recommendation Systems"],
+const dlTaskTree = {
+  "Image Processing": [
+    "Image Classification",
+    "Object Detection",
+    "Image Segmentation",
+    "Image Generation",
+    "Style Transfer",
+  ],
+  "Text Processing": [
+    "Text Classification",
+    "Sentiment Analysis",
+    "Named Entity Recognition",
+    "Text Generation",
+    "Machine Translation",
+    "Text Summarization",
+  ],
+  "Audio Processing": ["Speech Recognition", "Audio Classification", "Audio Generation", "Voice Conversion"],
+  "Generative Models": [
+    "GAN (Generative Adversarial Networks)",
+    "VAE (Variational Autoencoders)",
+    "Diffusion Models",
+    "Autoregressive Models",
+  ],
+  "Reinforcement Learning": [
+    "Value-based Methods (DQN, etc.)",
+    "Policy-based Methods (PPO, etc.)",
+    "Model-based Methods",
+    "Multi-agent Systems",
+  ],
+  "Other Tasks": ["Anomaly Detection", "Dimensionality Reduction", "Recommendation Systems", "Time Series Analysis"],
+}
+
+const mlTaskTree = {
+  Classification: ["Binary Classification", "Multi-class Classification", "Multi-label Classification"],
+  Regression: ["Simple Regression", "Multiple Regression", "Polynomial Regression", "Time Series Forecasting"],
+  Clustering: ["K-Means", "Hierarchical Clustering", "DBSCAN", "Gaussian Mixture Models"],
+  "Dimensionality Reduction": ["PCA (Principal Component Analysis)", "t-SNE", "UMAP", "Autoencoders"],
+  "Anomaly Detection": ["Isolation Forest", "One-Class SVM", "Local Outlier Factor", "Autoencoder-based Detection"],
+  "Recommendation Systems": [
+    "Collaborative Filtering",
+    "Content-Based Filtering",
+    "Hybrid Systems",
+    "Matrix Factorization",
+  ],
 }
 
 export function TaskSelection({ config, updateConfig }: TaskSelectionProps) {
+  const [mainTasks, setMainTasks] = useState<string[]>([])
   const [subTasks, setSubTasks] = useState<string[]>([])
 
   useEffect(() => {
-    if (config.mainTask && taskTree[config.mainTask as keyof typeof taskTree]) {
-      setSubTasks(taskTree[config.mainTask as keyof typeof taskTree])
+    if (config.mode === "dl") {
+      setMainTasks(Object.keys(dlTaskTree))
+    } else if (config.mode === "ml") {
+      setMainTasks(Object.keys(mlTaskTree))
+    } else {
+      setMainTasks([])
+    }
 
-      // Reset subtask if the main task changes
-      if (!taskTree[config.mainTask as keyof typeof taskTree].includes(config.subTask)) {
+    // Reset main task if mode changes
+    if (
+      config.mode &&
+      ((config.mode === "dl" && !Object.keys(dlTaskTree).includes(config.mainTask)) ||
+        (config.mode === "ml" && !Object.keys(mlTaskTree).includes(config.mainTask)))
+    ) {
+      updateConfig({ mainTask: "", subTask: "" })
+    }
+  }, [config.mode])
+
+  useEffect(() => {
+    if (config.mainTask) {
+      if (config.mode === "dl" && dlTaskTree[config.mainTask as keyof typeof dlTaskTree]) {
+        setSubTasks(dlTaskTree[config.mainTask as keyof typeof dlTaskTree])
+      } else if (config.mode === "ml" && mlTaskTree[config.mainTask as keyof typeof mlTaskTree]) {
+        setSubTasks(mlTaskTree[config.mainTask as keyof typeof mlTaskTree])
+      } else {
+        setSubTasks([])
+      }
+
+      // Reset subtask if main task changes
+      const taskTree = config.mode === "dl" ? dlTaskTree : mlTaskTree
+      if (
+        config.mainTask &&
+        taskTree[config.mainTask as keyof typeof taskTree] &&
+        !taskTree[config.mainTask as keyof typeof taskTree].includes(config.subTask)
+      ) {
         updateConfig({ subTask: "" })
       }
     } else {
       setSubTasks([])
     }
-  }, [config.mainTask])
+  }, [config.mainTask, config.mode])
 
   return (
     <div className="space-y-6">
@@ -50,12 +119,16 @@ export function TaskSelection({ config, updateConfig }: TaskSelectionProps) {
           transition={{ duration: 0.3, delay: 0.1 }}
         >
           <label className="text-sm font-medium text-slate-700">Main Task Category</label>
-          <Select value={config.mainTask} onValueChange={(value) => updateConfig({ mainTask: value })}>
+          <Select
+            value={config.mainTask}
+            onValueChange={(value) => updateConfig({ mainTask: value })}
+            disabled={!config.mode}
+          >
             <SelectTrigger className="transition-all duration-200 hover:border-slate-400">
               <SelectValue placeholder="Select a task category" />
             </SelectTrigger>
             <SelectContent>
-              {Object.keys(taskTree).map((task) => (
+              {mainTasks.map((task) => (
                 <SelectItem key={task} value={task}>
                   {task}
                 </SelectItem>

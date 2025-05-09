@@ -10,20 +10,19 @@ interface DataTypeSelectionProps {
 
 // Data type tree structure
 const dataTypeTree = {
-  "Image Data": ["PNG", "JPG", "BMP", "TIFF"],
-  "Text Data": ["Plain Text (.txt)", "CSV", "JSON"],
-  "Structured Data": ["Parquet", "CSV", "Excel (.xlsx)", "SQL Database"],
-  "Audio Data": ["WAV", "MP3", "FLAC"],
-  "Video Data": ["MP4", "AVI", "MOV"],
+  "Image Data": ["PNG", "JPG", "BMP", "TIFF", "PyTorch Tensor Format"],
+  "Text Data": ["Plain Text (.txt)", "CSV", "JSON", "PyTorch Text Dataset Format"],
+  "Structured Data": ["Parquet", "CSV", "Excel (.xlsx)", "SQL Database", "PyTorch Tabular Dataset"],
+  "Audio Data": ["WAV", "MP3", "FLAC", "PyTorch Audio Format"],
+  "Video Data": ["MP4", "AVI", "MOV", "PyTorch Video Format"],
   "Medical Data": [
     "DICOM (Medical Imaging)",
     "NIfTI (Neuroimaging)",
     "EEG (Electroencephalography)",
-    "Parquet",
     "HL7 (Health Level 7)",
     "FHIR (Fast Healthcare Interoperability Resources)",
   ],
-  "Other Formats": ["XML", "HDF5", "Pickle"],
+  "Other Formats": ["XML", "HDF5", "Pickle", "Custom PyTorch Dataset"],
 }
 
 export function DataTypeSelection({ config, updateConfig }: DataTypeSelectionProps) {

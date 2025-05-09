@@ -1,6 +1,9 @@
+"use client"
+
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
 import type { ModelConfig } from "./model-builder"
 import { motion } from "framer-motion"
 
@@ -14,57 +17,86 @@ const monitoringData = {
   "Training Monitoring": ["Loss Tracking", "Metric Tracking (Accuracy, F1, etc.)", "Learning Rate Scheduling"],
   "Performance Profiling": ["Memory Usage", "GPU Utilization", "Execution Time"],
   "Experiment Tracking": ["Parameter Logging (hyperparameters)", "Model Checkpointing", "Versioning"],
-  "Logging Tools": ["TensorBoard", "Weights & Biases", "MLflow", "Neptune.ai"],
-  Alerting: ["Threshold-Based Alerts (e.g., accuracy drop)", "Resource Alerts (e.g., high memory usage)"],
+  "Logging Tools": ["TensorBoard", "Weights & Biases", "MLflow", "PyTorch Lightning"],
+  Alerting: ["Threshold-Based Alerts", "Resource Alerts"],
 }
 
 // Optimizers data
 const optimizersData = {
-  "Gradient Descent-Based": ["SGD (Stochastic Gradient Descent)", "Adam", "RMSprop", "AdaGrad", "AdaDelta", "AdamW"],
-  "Second-Order Methods": ["LBFGS", "Newton-CG (External implementation)"],
-  "Adaptive Methods": ["Adam", "AdamW", "AMSGrad", "RAdam (Rectified Adam)"],
-  "Regularization-Based": ["Adamax", "Nadam (Nesterov-accelerated Adam)"],
+  "Gradient Descent-Based": ["torch.optim.SGD(params, lr, momentum, weight_decay, nesterov)"],
+  "Adaptive Methods": [
+    "torch.optim.Adam(params, lr, betas, eps, weight_decay, amsgrad)",
+    "torch.optim.AdamW(params, lr, betas, eps, weight_decay)",
+    "torch.optim.Adamax(params, lr, betas, eps, weight_decay)",
+    "torch.optim.RMSprop(params, lr, alpha, eps, weight_decay, momentum)",
+    "torch.optim.Adagrad(params, lr, lr_decay, weight_decay, eps)",
+    "torch.optim.Adadelta(params, lr, rho, eps, weight_decay)",
+  ],
+  "Second-Order Methods": ["torch.optim.LBFGS(params, lr, max_iter, max_eval, tolerance_grad, tolerance_change)"],
+  "Regularization-Based": [
+    "torch.optim.NAdam(params, lr, betas, eps, weight_decay, momentum_decay)",
+    "torch.optim.RAdam(params, lr, betas, eps, weight_decay)",
+  ],
   "Other Optimizers": [
-    "ASGD (Averaged Stochastic Gradient Descent)",
-    "SparseAdam (for sparse tensors)",
-    "FTRL (Follow the Regularized Leader, External implementation)",
+    "torch.optim.SparseAdam(params, lr, betas, eps)",
+    "torch.optim.ASGD(params, lr, lambd, alpha, t0, weight_decay)",
   ],
 }
 
 // Loss functions data
 const lossesData = {
-  "Regression Losses": ["MSELoss (Mean Squared Error)", "L1Loss (Mean Absolute Error)", "HuberLoss (Smooth L1 Loss)"],
+  "Regression Losses": [
+    "torch.nn.MSELoss(reduction)",
+    "torch.nn.L1Loss(reduction)",
+    "torch.nn.SmoothL1Loss(reduction, beta)",
+    "torch.nn.HuberLoss(reduction, delta)",
+  ],
   "Classification Losses": [
-    "CrossEntropyLoss",
-    "BCEWithLogitsLoss (Binary Cross Entropy with Logits)",
-    "NLLLoss (Negative Log Likelihood)",
-    "HingeEmbeddingLoss",
+    "torch.nn.CrossEntropyLoss(weight, reduction)",
+    "torch.nn.BCELoss(weight, reduction)",
+    "torch.nn.BCEWithLogitsLoss(weight, reduction, pos_weight)",
+    "torch.nn.NLLLoss(weight, reduction)",
+    "torch.nn.MarginRankingLoss(margin, reduction)",
   ],
-  "Embedding Losses": ["TripletMarginLoss", "CosineEmbeddingLoss"],
+  "Embedding Losses": [
+    "torch.nn.TripletMarginLoss(margin, p, eps, swap, reduction)",
+    "torch.nn.CosineEmbeddingLoss(margin, reduction)",
+    "torch.nn.MultiMarginLoss(p, margin, weight, reduction)",
+  ],
   "Segmentation Losses": [
-    "DiceLoss (External or custom implementation)",
-    "JaccardLoss (External or custom implementation)",
+    "torch.nn.functional.binary_cross_entropy_with_logits (with dice loss implementation)",
+    "torch.nn.functional.cross_entropy (with focal loss implementation)",
   ],
-  "Adversarial Losses": ["GAN Loss (BCE or custom, for GANs)", "Wasserstein Loss (WGAN)"],
-  "Customizable Losses": ["Custom Loss (Lambda layer for user-defined functions)", "MultiLabelSoftMarginLoss"],
+  "Adversarial Losses": ["Minimax GAN Loss", "Wasserstein Loss", "Least Squares Loss"],
+  "Customizable Losses": ["Custom Loss Function (with code template)"],
 }
 
 // Metrics data
 const metricsData = {
-  "Classification Metrics": ["Accuracy", "Precision", "Recall", "F1 Score", "AUC-ROC"],
-  "Regression Metrics": [
-    "Mean Absolute Error (MAE)",
-    "Mean Squared Error (MSE)",
-    "Root Mean Squared Error (RMSE)",
-    "R-squared",
+  "Classification Metrics": [
+    "torchmetrics.Accuracy()",
+    "torchmetrics.Precision()",
+    "torchmetrics.Recall()",
+    "torchmetrics.F1Score()",
+    "torchmetrics.AUROC()",
+    "torchmetrics.ConfusionMatrix()",
   ],
-  "Segmentation Metrics": ["Dice Coefficient", "Jaccard Index (IoU - Intersection over Union)"],
-  "Ranking Metrics": ["Mean Reciprocal Rank (MRR)", "Normalized Discounted Cumulative Gain (NDCG)"],
-  "Clustering Metrics": ["Silhouette Score", "Davies-Bouldin Index", "Adjusted Rand Index"],
+  "Regression Metrics": [
+    "torchmetrics.MeanAbsoluteError()",
+    "torchmetrics.MeanSquaredError()",
+    "torchmetrics.MeanSquaredLogError()",
+    "torchmetrics.R2Score()",
+  ],
+  "Segmentation Metrics": ["torchmetrics.JaccardIndex() (IoU)", "torchmetrics.Dice()"],
+  "Ranking Metrics": ["torchmetrics.RetrievalMRR()", "torchmetrics.RetrievalNormalizedDCG()"],
+  "Clustering Metrics": [
+    "Silhouette Score (via sklearn integration)",
+    "Davies-Bouldin Index (via sklearn integration)",
+  ],
   Miscellaneous: [
-    "Log-Loss (Binary Cross-Entropy Loss as Metric)",
-    "Cosine Similarity",
-    "Mean Squared Logarithmic Error (MSLE)",
+    "torchmetrics.CosineSimilarity()",
+    "torchmetrics.ExplainedVariance()",
+    "torchmetrics.SpearmanCorrcoef()",
   ],
 }
 
@@ -73,6 +105,8 @@ export function ParametersSelection({ config, updateConfig }: ParametersSelectio
   const [optimizerCategory, setOptimizerCategory] = useState("")
   const [lossCategory, setLossCategory] = useState("")
   const [metricCategory, setMetricCategory] = useState("")
+  const [optimizerParams, setOptimizerParams] = useState<Record<string, string>>({})
+  const [lossParams, setLossParams] = useState<Record<string, string>>({})
 
   const handleMonitoringCategoryChange = (category: string) => {
     setMonitoringCategory(category)
@@ -95,38 +129,100 @@ export function ParametersSelection({ config, updateConfig }: ParametersSelectio
 
   const handleOptimizerCategoryChange = (category: string) => {
     setOptimizerCategory(category)
+    setOptimizerParams({})
     updateConfig({
       optimizer: {
         category,
         name: "",
+        params: {},
       },
     })
   }
 
   const handleOptimizerChange = (name: string) => {
+    // Extract parameters from optimizer string
+    const paramMatch = name.match(/$$(.*?)$$/)
+    if (paramMatch && paramMatch[1]) {
+      const params = paramMatch[1].split(",").map((p) => p.trim())
+      const paramObj: Record<string, string> = {}
+
+      params.forEach((param) => {
+        const [paramName] = param.split("=")
+        paramObj[paramName] = ""
+      })
+
+      setOptimizerParams(paramObj)
+    } else {
+      setOptimizerParams({})
+    }
+
     updateConfig({
       optimizer: {
         category: optimizerCategory,
         name,
+        params: {},
+      },
+    })
+  }
+
+  const handleOptimizerParamChange = (param: string, value: string) => {
+    const updatedParams = { ...optimizerParams, [param]: value }
+    setOptimizerParams(updatedParams)
+
+    updateConfig({
+      optimizer: {
+        ...config.optimizer!,
+        params: updatedParams,
       },
     })
   }
 
   const handleLossCategoryChange = (category: string) => {
     setLossCategory(category)
+    setLossParams({})
     updateConfig({
       loss: {
         category,
         name: "",
+        params: {},
       },
     })
   }
 
   const handleLossChange = (name: string) => {
+    // Extract parameters from loss string
+    const paramMatch = name.match(/$$(.*?)$$/)
+    if (paramMatch && paramMatch[1]) {
+      const params = paramMatch[1].split(",").map((p) => p.trim())
+      const paramObj: Record<string, string> = {}
+
+      params.forEach((param) => {
+        const [paramName] = param.split("=")
+        paramObj[paramName] = ""
+      })
+
+      setLossParams(paramObj)
+    } else {
+      setLossParams({})
+    }
+
     updateConfig({
       loss: {
         category: lossCategory,
         name,
+        params: {},
+      },
+    })
+  }
+
+  const handleLossParamChange = (param: string, value: string) => {
+    const updatedParams = { ...lossParams, [param]: value }
+    setLossParams(updatedParams)
+
+    updateConfig({
+      loss: {
+        ...config.loss!,
+        params: updatedParams,
       },
     })
   }
@@ -153,7 +249,7 @@ export function ParametersSelection({ config, updateConfig }: ParametersSelectio
   return (
     <div className="space-y-6">
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-        <h2 className="text-2xl font-bold text-slate-900">Parameters</h2>
+        <h2 className="text-2xl font-bold text-slate-900">Training Parameters</h2>
         <p className="text-slate-500">Configure monitoring, optimizers, loss functions, and evaluation metrics</p>
       </motion.div>
 
@@ -278,6 +374,30 @@ export function ParametersSelection({ config, updateConfig }: ParametersSelectio
                 </Select>
               </motion.div>
             </div>
+
+            {config.optimizer?.name && Object.keys(optimizerParams).length > 0 && (
+              <motion.div
+                className="mt-4 space-y-4 rounded-lg border border-slate-200 bg-slate-50 p-4"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <h3 className="text-sm font-medium text-slate-700">Optimizer Parameters</h3>
+                <div className="grid gap-4 md:grid-cols-3">
+                  {Object.keys(optimizerParams).map((param) => (
+                    <div key={param} className="space-y-1">
+                      <label className="text-xs font-medium text-slate-600">{param}</label>
+                      <Input
+                        value={optimizerParams[param]}
+                        onChange={(e) => handleOptimizerParamChange(param, e.target.value)}
+                        placeholder={`Enter ${param}`}
+                        className="h-8 text-sm"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
           </TabsContent>
 
           {/* Losses Tab */}
@@ -325,6 +445,30 @@ export function ParametersSelection({ config, updateConfig }: ParametersSelectio
                 </Select>
               </motion.div>
             </div>
+
+            {config.loss?.name && Object.keys(lossParams).length > 0 && (
+              <motion.div
+                className="mt-4 space-y-4 rounded-lg border border-slate-200 bg-slate-50 p-4"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <h3 className="text-sm font-medium text-slate-700">Loss Parameters</h3>
+                <div className="grid gap-4 md:grid-cols-3">
+                  {Object.keys(lossParams).map((param) => (
+                    <div key={param} className="space-y-1">
+                      <label className="text-xs font-medium text-slate-600">{param}</label>
+                      <Input
+                        value={lossParams[param]}
+                        onChange={(e) => handleLossParamChange(param, e.target.value)}
+                        placeholder={`Enter ${param}`}
+                        className="h-8 text-sm"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
           </TabsContent>
 
           {/* Metrics Tab */}
