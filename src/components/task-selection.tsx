@@ -91,18 +91,17 @@ export function TaskSelection({ config, updateConfig }: TaskSelectionProps) {
       }
 
       // Reset subtask if main task changes
-      const taskTree = config.mode === "dl" ? dlTaskTree : mlTaskTree
-      if (
-        config.mainTask &&
-        taskTree[config.mainTask as keyof typeof taskTree] &&
-        !taskTree[config.mainTask as keyof typeof taskTree].includes(config.subTask)
-      ) {
-        updateConfig({ subTask: "" })
+      const taskTree = config.mode === "dl" ? dlTaskTree : mlTaskTree;
+      if (config.mainTask && taskTree.hasOwnProperty(config.mainTask)) {
+        const selectedTaskTree = taskTree[config.mainTask as keyof typeof taskTree] as string[];
+        if (selectedTaskTree && !selectedTaskTree.includes(config.subTask)) {
+          updateConfig({ subTask: "" });
+        }
       }
     } else {
-      setSubTasks([])
+      setSubTasks([]);
     }
-  }, [config.mainTask, config.mode])
+  }, [config.mainTask, config.mode]);
 
   return (
     <div className="space-y-6">

@@ -537,7 +537,7 @@ def create_data_loaders(data_path, batch_size=${config.training?.batchSize || 32
       modelDefinition += `    def forward(self, x):\n`
       config.customLayers.forEach((layer, idx) => {
         const layerName = layer.type.split("(")[0].split(".").pop()
-        modelDefinition += `        x = self.${layerName.toLowerCase()}${idx + 1}(x)\n`
+        modelDefinition += `        x = self.${layerName?.toLowerCase()}${idx + 1}(x)\n`
       })
       modelDefinition += `        return x\n`
     } else {

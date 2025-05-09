@@ -159,7 +159,7 @@ export function ModelSelection({ config, updateConfig }: ModelSelectionProps) {
   const [selectedLayerCategory, setSelectedLayerCategory] = useState("")
   const [selectedLayer, setSelectedLayer] = useState("")
   const [availableLayers, setAvailableLayers] = useState<string[]>([])
-  const [modelCategory, setModelCategory] = useState(config.pretrainedModelCategory || "")
+  const [] = useState(config.pretrainedModelCategory || "")
   const [availableModels, setAvailableModels] = useState<string[]>([])
   const [layerParams, setLayerParams] = useState<Record<string, string>>({})
 
@@ -201,19 +201,6 @@ export function ModelSelection({ config, updateConfig }: ModelSelectionProps) {
     }))
   }
 
-  const handleModelCategoryChange = (category: string) => {
-    setModelCategory(category)
-
-    if (config.mode && config.subTask) {
-      const models = pretrainedModels[config.mode]?.[config.subTask] || []
-      setAvailableModels(models)
-    }
-
-    updateConfig({
-      pretrainedModelCategory: category,
-      pretrainedModel: "",
-    })
-  }
 
   const handleModelChange = (model: string) => {
     updateConfig({ pretrainedModel: model })
