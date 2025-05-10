@@ -1,0 +1,25 @@
+
+{# TEMPORARY PLACEHOLDER,need handling for train/infer/post to machine seperately#}
+
+
+if __name__ == "__main__":
+    torch.manual_seed(42)
+    data_path = "path/to/your/data"  # TODO: Replace
+    train_loader, val_loader = create_data_loaders(data_path, batch_size={{ config.training.batchSize or 32 }})
+    model = {{ model_class }}(num_classes=10)
+    model, train_losses, val_losses = train_model(
+        model,
+        train_loader,
+        val_loader,
+        num_epochs={{ config.training.epochs or 10 }},
+        learning_rate={{ config.training.learningRate or 0.001 }},
+        weight_decay={{ config.training.weightDecay or 0.0001 }}
+    )
+    accuracy = evaluate_model(model, val_loader)
+    torch.save(model.state_dict(), "model.pth")
+    print("Model saved to model.pth")
+    loaded_model = {{ model_class }}(num_classes=10)
+    loaded_model.load_state_dict(torch.load("model.pth"))
+    dummy_input = torch.randn(3, 224, 224)
+    prediction = inference(loaded_model, dummy_input)
+    print(f"Prediction: {prediction}")

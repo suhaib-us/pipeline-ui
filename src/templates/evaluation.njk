@@ -1,0 +1,20 @@
+# Evaluation
+def evaluate_model(model, test_loader):
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model = model.to(device)
+    model.eval()
+
+    all_preds = []
+    all_targets = []
+    with torch.no_grad():
+        for inputs, labels in test_loader:
+            inputs, labels = inputs.to(device), labels.to(device)
+            outputs = model(inputs)
+            _, preds = torch.max(outputs, 1)
+            all_preds.extend(preds.cpu().numpy())
+            all_targets.extend(labels.cpu().numpy())
+    accuracy = sum(1 for x, y in zip(all_preds, all_targets) if x == y) / len(all_targets)
+    print(f"Test Accuracy: {accuracy:.4f}")
+    return accuracy
+
+    {# TODO: configure other metrics #}

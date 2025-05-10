@@ -1,0 +1,24 @@
+# Inference Example
+def inference(model, input_data):
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model = model.to(device)
+    model.eval()
+
+    transform = get_transforms()
+    if transform:
+        input_data = transform(input_data)
+    if input_data.dim() == 3:
+        input_data = input_data.unsqueeze(0)
+    input_data = input_data.to(device)
+
+    with torch.no_grad():
+        output = model(input_data)
+
+    {% if config.subTask in ["Image Classification", "Text Classification"] %}
+    _, pred = torch.max(output, 1)
+    return pred.item()
+    {% else %}
+    return output.cpu().numpy()
+    {% endif %}
+
+{# TODO: more tasks #}
