@@ -1,0 +1,89 @@
+# Model Definition
+{% if config.modelType == "pretrained" %}
+    {% if config.pretrainedModel %}
+        {% if config.mainTask == "Image Processing" %}
+class {{ model_class }}(nn.Module):
+    def __init__(self, num_classes=10):
+        super({{ model_class }}, self).__init__()
+        self.model = torchvision.models.{{ pretrained_model_code }}
+        {% if config.subTask == "Image Classification" %}
+        in_features = self.model.fc.in_features
+        self.model.fc = nn.Linear(in_features, num_classes)
+        {% elif config.subTask == "Object Detection" %}
+        # TODO: Implement object detection specific modifications
+        {% elif config.subTask == "Image Segmentation" %}
+        # TODO: Implement segmentation specific modifications
+        {% endif %}
+    def forward(self, x):
+        return self.model(x)
+        {% elif config.mainTask == "Text Processing" %}
+class {{ model_class }}(nn.Module):
+    def __init__(self, num_classes=10):
+        super({{ model_class }}, self).__init__()
+        self.embedding = nn.Embedding(10000, 300)
+        self.encoder = nn.LSTM(300, 512, batch_first=True)
+        self.fc = nn.Linear(512, num_classes)
+    def forward(self, x):
+        x = self.embedding(x)
+        _, (hidden, _) = self.encoder(x)
+        return self.fc(hidden[-1])
+        {% else %}
+class {{ model_class }}(nn.Module):
+    def __init__(self, num_classes=10):
+        super({{ model_class }}, self).__init__()
+        self.layers = nn.Sequential(
+            nn.Linear(10, 128),
+            nn.ReLU(),
+            nn.Linear(128, 64),
+            nn.ReLU(),
+            nn.Linear(64, num_classes)
+        )
+    def forward(self, x):
+        return self.layers(x)
+        {% endif %}
+    {% else %}
+# No pretrainedModel provided; fallback placeholder
+class {{ model_class }}(nn.Module):
+    def __init__(self, num_classes=10):
+        super({{ model_class }}, self).__init__()
+        self.layers = nn.Sequential(
+            nn.Linear(10, 128),
+            nn.ReLU(),
+            nn.Linear(128, 64),
+            nn.ReLU(),
+            nn.Linear(64, num_classes)
+        )
+    def forward(self, x):
+        return self.layers(x)
+    {% endif %}
+{% else %}
+# Custom model architecture
+class {{ model_class }}(nn.Module):
+    def __init__(self, num_classes=10):
+        super({{ model_class }}, self).__init__()
+        {% if config.customLayers and config.customLayers|length > 0 %}
+        {# Grouped layers #}
+        {% for group, layers in config.customLayers|groupby('category') %}
+        # {{ group }}
+        {% for layer in layers %}
+        self.{{ layer.type.split('(')[0].split('.')[-1]|lower }}{{ loop.index }} = {{ layer.type }}
+        {% endfor %}
+        {% endfor %}
+    def forward(self, x):
+        {% for layer in config.customLayers %}
+        x = self.{{ layer.type.split('(')[0].split('.')[-1]|lower }}{{ loop.index }}(x)
+        {% endfor %}
+        return x
+        {% else %}
+        # Default placeholder
+        self.layers = nn.Sequential(
+            nn.Linear(10, 128),
+            nn.ReLU(),
+            nn.Linear(128, 64),
+            nn.ReLU(),
+            nn.Linear(64, num_classes)
+        )
+    def forward(self, x):
+        return self.layers(x)
+        {% endif %}
+{% endif %}

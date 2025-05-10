@@ -1,0 +1,31 @@
+# Data Loading and Preprocessing
+class CustomDataset(Dataset):
+    def __init__(self, data_path, transform=None):
+        self.data_path = data_path
+        self.transform = transform
+        # TODO: Implement dataset loading logic
+        
+    def __len__(self):
+        # TODO: Return the size of the dataset
+        return 100  # Placeholder
+        
+    def __getitem__(self, idx):
+        if torch.is_tensor(idx):
+            idx = idx.tolist()
+        {# add stuff to enter correct params when added #}
+        {% if config.mainDataType == "Image Data" %}
+        sample = torch.randn(3, 224, 224)
+        {% elif config.mainDataType == "Text Data" %}
+        sample = torch.randint(0, 1000, (100,))
+        {% elif config.mainDataType == "Audio Data" %}
+        sample = torch.randn(1, 16000)
+        {% else %}
+        sample = torch.randn(10)
+        {% endif %}
+        
+        label = torch.randint(0, 10, (1,)).item()
+        
+        if self.transform:
+            sample = self.transform(sample)
+        
+        return sample, label
