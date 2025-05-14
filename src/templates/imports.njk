@@ -1,0 +1,31 @@
+
+{# REDO: based on more context, ML/DL , by definig list of imports as options are chosen at diff steps #}
+
+{{ file_metadata }}
+# PyTorch Model: {{ config.subTask }}
+
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, Dataset
+
+{% if config.mainDataType == "Image Data" %}
+import torchvision
+from torchvision import transforms
+from PIL import Image
+{% elif config.mainDataType == "Text Data" %}
+import torchtext
+from torchtext.data.utils import get_tokenizer
+{% elif config.mainDataType == "Audio Data" %}
+import torchaudio
+from torchaudio import transforms as audio_transforms
+{% endif %}
+
+{% if config.metrics and config.metrics.name and config.metrics.name.startswith("torchmetrics") %}
+import torchmetrics
+{% endif %}
+
+import numpy as np
+import os
+import matplotlib.pyplot as plt
+from tqdm import tqdm
