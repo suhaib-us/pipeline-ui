@@ -3,10 +3,13 @@ class CustomDataset(Dataset):
     def __init__(self, data_path, transform=None):
         self.data_path = data_path
         self.transform = transform
-        # TODO: Implement dataset loading logic
+        # TODO: Implement actual dataset loading logic
+        {% if config.mainDataType == "Image Data" %}
+        dataloader = 
         
     def __len__(self):
-        # TODO: Return the size of the dataset
+        # TODO: Return the size of the dataset based on task
+        return len(labels)
         return 100  # Placeholder
         
     def __getitem__(self, idx):
